@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#define _POSIX_C_SOURCE 200809L
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -128,7 +129,7 @@ int main(int argc, char *argv[])
         if (err == EINVAL)
         {
             bytes_left = sizeof buffer / sizeof *buffer - bytes_scanned;
-            memcpy(buffer, buffer + bytes_scanned, bytes_left);
+            memmove(buffer, buffer + bytes_scanned, bytes_left);
         }
         else
         {
