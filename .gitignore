@@ -1,0 +1,5 @@
+*.o
+strings-utf16
+strings-utf16-*
+testing/
+*.txt
