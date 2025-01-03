@@ -316,7 +316,8 @@ malloc_u8str:
     q = u8str;
     bytes_written = sizeof *u8str * buf_sz;
 
-    iconv(cd, NULL, NULL, &q, &bytes_written);
+    //iconv(cd, NULL, NULL, &q, &bytes_written);
+    iconv(cd, NULL, NULL, NULL, NULL);
     ret = iconv(cd, &p, &bytes_scanned, &q, &bytes_written);
     *out_buf_len = q - u8str;
 
