@@ -296,7 +296,7 @@ char *from_wc_str(iconv_t cd, const char **buf, size_t size, int lflag, size_t *
         if (bytes_scanned == 0)
         {
             *bytes_read = 0;
-            // *err ??
+            *err = EILSEQ;
             return NULL;
         }
     }
