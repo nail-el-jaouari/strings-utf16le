@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 
         p = buffer;
 
-        print_buffer(cd, (char **)&p, bytes_read, &bytes_scanned, lflag, &err);
+        print_buffer(cd, (char **)&p, bytes_read + bytes_left, &bytes_scanned, lflag, &err);
 
         if (err == EINVAL)
         {
