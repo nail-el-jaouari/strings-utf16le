@@ -349,6 +349,7 @@ malloc_u8str:
     }
     else
     {
+        *err = 0;
         *bytes_read = (size_t)(p - inbuf);
 
         return u8str;
