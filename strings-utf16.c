@@ -325,14 +325,7 @@ malloc_u8str:
     {
         switch (errno)
         {
-	case EILSEQ:
-	{
-	    *err = EILSEQ;
-	    *bytes_read = (size_t)(p - inbuf);
-
-	    return u8str;
-	}
-	break;
+    case EILSEQ:
 	case EINVAL:
 	{
 	    *err = EINVAL;
