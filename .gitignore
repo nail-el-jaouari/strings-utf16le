@@ -2,4 +2,5 @@
 strings-utf16
 strings-utf16-*
 testing/
+.vscode/
 *.txt
