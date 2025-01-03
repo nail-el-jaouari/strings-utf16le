@@ -13,7 +13,7 @@
 #include <string.h>
 
 #ifndef BUF_SZ
-#define BUF_SZ (1024)
+#define BUF_SZ (8)
 #endif
 
 void usage(int err);
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     }
 
     char buffer[BUF_SZ];
-    char *p = buffer;
+    char *p = buffer; /* this pointer is needed because if we pass address of buffer array to function print_buffer it can't change its value*/
     char *new_buffer;
     int keeping = 1;
     size_t bytes_read;
