@@ -194,7 +194,7 @@ void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, in
     size_t position          = 0;
     size_t out_buf_len       = 0;
 
-    static int wc_str_pnt   = 0;
+    static int wc_str_pnt   = 1;
     //static int char_skipped = 0;
 
     while (position < size)
