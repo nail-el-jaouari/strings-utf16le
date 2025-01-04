@@ -265,45 +265,12 @@ void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, in
     }
 }
 
-static size_t wc_printable(const wchar_t *buf, size_t size)
-{
-    for (size_t i = 0; i < size; i++)
-    {
-        const unsigned char *p = (const unsigned char *)buf;
-        unsigned char c[2];
-        c[0] = p[2 * i];
-        c[1] = p[2 * i + 1];
-        wchar_t w = (c[0]) | (c[1] << 8);
-        if (!iswprint(w))
-        {
-            return i;
-        }
-    }
-
-    return size;
-}
-
 char *from_wc_str(iconv_t cd, const char **buf, size_t size, int lflag, size_t *bytes_read, size_t *out_buf_len, error_t *err)
 {
     size_t ret;
     char *inbuf = (char *)*buf;
     char *p = inbuf;
-    size_t bytes_scanned;
-
-    if (lflag)
-    {
-        bytes_scanned = 2 * wc_printable((const wchar_t *)inbuf, size/2);
-        if (bytes_scanned == 0)
-        {
-            *bytes_read = 0;
-            *err = EILSEQ;
-            return NULL;
-        }
-    }
-    else
-    {
-        bytes_scanned = size;
-    }
+    size_t bytes_scanned = size;
 
     char *u8str;
     char *q = NULL;
