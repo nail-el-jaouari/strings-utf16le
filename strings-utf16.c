@@ -244,6 +244,7 @@ void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, in
         }
         else
         {
+            free(old_buf);
             goto skip_char;
         }
 
