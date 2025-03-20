@@ -313,7 +313,7 @@ char *from_wc_str(iconv_t cd, const char **buf, size_t size, int lflag, size_t *
     size_t buf_sz = 1024;
 
 malloc_u8str:
-    u8str = calloc(sizeof *u8str, (buf_sz + 1));
+    u8str = calloc((buf_sz + 1), sizeof *u8str);
     q = u8str;
     bytes_written = sizeof *u8str * buf_sz;
 
