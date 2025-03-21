@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 
         new_buffer = buffer + bytes_left;
         memset(new_buffer, '\0', bytes_scanned);
-        bytes_read = fread(new_buffer, sizeof *new_buffer, bytes_scanned, f);
+        bytes_read = fread(new_buffer, sizeof *new_buffer, BUF_SZ, f);
 
         if (bytes_read == 0)
         {
@@ -124,11 +124,11 @@ int main(int argc, char *argv[])
 
         p = buffer;
 
-        print_buffer(cd, (char **)&p, bytes_read + bytes_left, &bytes_scanned, lflag, &err);
+        print_buffer(cd, (char **)&p, bytes_read, &bytes_scanned, lflag, &err);
 
         if (err == EINVAL)
         {
-            bytes_left = sizeof buffer / sizeof *buffer - bytes_scanned;
+            bytes_left = bytes_read - bytes_scanned;
             memmove(buffer, buffer + bytes_scanned, bytes_left);
         }
         else
