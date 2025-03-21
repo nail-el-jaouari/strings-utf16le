@@ -327,26 +327,26 @@ malloc_u8str:
     {
         switch (errno)
         {
-    case EILSEQ:
-	case EINVAL:
-	{
-	    *err = EINVAL;
-	    *bytes_read = (size_t)(p - inbuf);
+            case EILSEQ:
+            case EINVAL:
+            {
+                *err = EINVAL;
+                *bytes_read = (size_t)(p - inbuf);
 
-	    return u8str;
-	}
-	break;
-	case E2BIG:
-	{
-	    free(u8str);
-	    buf_sz *= 2;
-	    goto malloc_u8str;
-	}
-	break;
-	default:
-	{
-	    return u8str;
-	}
+                return u8str;
+            }
+            break;
+            case E2BIG:
+            {
+                free(u8str);
+                buf_sz *= 2;
+                goto malloc_u8str;
+            }
+            break;
+            default:
+            {
+                return u8str;
+            }
         }
     }
     else
