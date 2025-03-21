@@ -2,9 +2,9 @@
 strings-utf16
 strings-utf16-*
 debug
+debug-*
+mui/
 testing/
+Debug/
 .vscode/
-binutils-2.42/
-binutils_2.42-4ubuntu2.3.debian.tar.xz
-binutils_2.42.orig.tar.xz
 *.txt
