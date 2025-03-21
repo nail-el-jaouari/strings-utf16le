@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 
         new_buffer = buffer + bytes_left;
         memset(new_buffer, '\0', bytes_scanned);
-        bytes_read = fread(new_buffer, sizeof *new_buffer, BUF_SZ, f);
+        bytes_read = fread(new_buffer, sizeof *new_buffer, BUF_SZ - bytes_left, f);
 
         if (bytes_read == 0)
         {
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
         else
         {
             bytes_left = 0;
-            bytes_scanned = sizeof buffer / sizeof *buffer;
+            bytes_scanned = bytes_read;
         }
 
         if (new_buffer - buffer + bytes_read < sizeof buffer / sizeof *buffer)
