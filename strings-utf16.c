@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         goto exit_program;
     }
 
-    FILE *f = fopen(argv[optind], "r");
+    FILE *f = fopen(argv[optind], "rb");
 
     if (f == NULL)
     {
