@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         goto exit_program;
     }
 
-    FILE *f = fopen(argv[optind], "r");
+    FILE *f = fopen(argv[optind], "rb");
 
     if (f == NULL)
     {
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 
         new_buffer = buffer + bytes_left;
         memset(new_buffer, '\0', bytes_scanned);
-        bytes_read = fread(new_buffer, sizeof *new_buffer, bytes_scanned, f);
+        bytes_read = fread(new_buffer, sizeof *new_buffer, BUF_SZ - bytes_left, f);
 
         if (bytes_read == 0)
         {
@@ -124,17 +124,17 @@ int main(int argc, char *argv[])
 
         p = buffer;
 
-        print_buffer(cd, (char **)&p, bytes_read + bytes_left, &bytes_scanned, lflag, &err);
+        print_buffer(cd, (char **)&p, bytes_read, &bytes_scanned, lflag, &err);
 
         if (err == EINVAL)
         {
-            bytes_left = sizeof buffer / sizeof *buffer - bytes_scanned;
+            bytes_left = bytes_read - bytes_scanned;
             memmove(buffer, buffer + bytes_scanned, bytes_left);
         }
         else
         {
             bytes_left = 0;
-            bytes_scanned = sizeof buffer / sizeof *buffer;
+            bytes_scanned = bytes_read;
         }
 
         if (new_buffer - buffer + bytes_read < sizeof buffer / sizeof *buffer)
@@ -244,7 +244,7 @@ void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, in
         }
         else
         {
-	    free(old_buf);
+            free(old_buf);
             goto skip_char;
         }
 
@@ -327,26 +327,26 @@ malloc_u8str:
     {
         switch (errno)
         {
-    case EILSEQ:
-	case EINVAL:
-	{
-	    *err = EINVAL;
-	    *bytes_read = (size_t)(p - inbuf);
+            case EILSEQ:
+            case EINVAL:
+            {
+                *err = EINVAL;
+                *bytes_read = (size_t)(p - inbuf);
 
-	    return u8str;
-	}
-	break;
-	case E2BIG:
-	{
-	    free(u8str);
-	    buf_sz *= 2;
-	    goto malloc_u8str;
-	}
-	break;
-	default:
-	{
-	    return u8str;
-	}
+                return u8str;
+            }
+            break;
+            case E2BIG:
+            {
+                free(u8str);
+                buf_sz *= 2;
+                goto malloc_u8str;
+            }
+            break;
+            default:
+            {
+                return u8str;
+            }
         }
     }
     else
