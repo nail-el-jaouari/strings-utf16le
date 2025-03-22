@@ -13,7 +13,7 @@
 #include <string.h>
 
 #ifndef BUF_SZ
-#define BUF_SZ (8)
+#define BUF_SZ (4)
 #endif
 
 void usage(int err);
