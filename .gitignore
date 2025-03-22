@@ -3,6 +3,7 @@ strings-utf16
 strings-utf16-*
 debug
 debug-*
+make-debug.sh
 mui/
 testing/
 Debug/
