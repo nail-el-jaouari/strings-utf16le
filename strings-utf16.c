@@ -277,7 +277,7 @@ static size_t wc_printable(const wchar_t *buf, size_t size)
         c[2] = '\0';
         c[3] = '\0';
 
-        wchar_t w = (c[0]) | (c[1]<<8);
+        wchar_t w = (c[0]) | (c[1]<<8) | (c[2]<<16) | (c[3]<<24);
         if (!iswprint(w))
         {
             return i;
