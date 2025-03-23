@@ -17,8 +17,8 @@
 #endif
 
 void usage(int err);
-void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, int lflag, error_t *err);
-char *from_wc_str(iconv_t cd, const char **buf, size_t size, int lflag, size_t *bytes_read, size_t *out_buf_len, error_t *err);
+void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, error_t *err);
+char *from_wc_str(iconv_t cd, const char **buf, size_t size, size_t *bytes_read, size_t *out_buf_len, error_t *err);
 //char *from_str(const char *buf, size_t size, size_t *bytes_read);
 
 int main(int argc, char *argv[])
@@ -39,16 +39,16 @@ int main(int argc, char *argv[])
         }
         switch (c)
         {
-	case 'h':
-	    hflag = 1;
-	    break;
-	case 'l':
-	    lflag = 1;
-	    locale = optarg;
-	    break;
-	default:
-	    usage(1);
-	    return EXIT_FAILURE;
+            case 'h':
+                hflag = 1;
+                break;
+            case 'l':
+                lflag = 1;
+                locale = optarg;
+                break;
+            default:
+                usage(1);
+                return EXIT_FAILURE;
         }
     }
     if (hflag)
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 
         p = buffer;
 
-        print_buffer(cd, (char **)&p, bytes_read, &bytes_scanned, lflag, &err);
+        print_buffer(cd, (char **)&p, bytes_read, &bytes_scanned, &err);
 
         if (err == EINVAL)
         {
@@ -187,7 +187,7 @@ void print_str(const char **str, size_t size)
     fflush(stdout);
 }
 
-void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, int lflag, error_t *err)
+void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, error_t *err)
 {
     char *shift_buf          = *buf;
     int crossing_boundary    = 0;
@@ -202,7 +202,7 @@ void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, in
         char *new_buf;
         char *old_buf;
     print_wc_str:
-        new_buf = from_wc_str(cd, (const char **)&shift_buf, size - position, lflag, bytes_scanned, &out_buf_len, err);
+        new_buf = from_wc_str(cd, (const char **)&shift_buf, size - position, bytes_scanned, &out_buf_len, err);
         old_buf = new_buf;
 
         if (*bytes_scanned != 0 && new_buf != NULL)
@@ -287,27 +287,19 @@ static size_t wc_printable(const wchar_t *buf, size_t size)
     return size;
 }
 
-char *from_wc_str(iconv_t cd, const char **buf, size_t size, int lflag, size_t *bytes_read, size_t *out_buf_len, error_t *err)
+char *from_wc_str(iconv_t cd, const char **buf, size_t size, size_t *bytes_read, size_t *out_buf_len, error_t *err)
 {
     size_t ret;
     char *inbuf = (char *)*buf;
     char *p = inbuf;
-    //size_t bytes_scanned = size;
     size_t bytes_scanned;
 
-    if (lflag)
+    bytes_scanned = 2 * wc_printable((const wchar_t *)inbuf, size/2);
+    if (bytes_scanned == 0)
     {
-        bytes_scanned = 2 * wc_printable((const wchar_t *)inbuf, size/2);
-        if (bytes_scanned == 0)
-        {
-            *bytes_read = 0;
-            *err = EILSEQ;
-            return NULL;
-        }
-    }
-    else
-    {
-        bytes_scanned = size;
+        *bytes_read = 0;
+        *err = EILSEQ;
+        return NULL;
     }
 
     char *u8str;
