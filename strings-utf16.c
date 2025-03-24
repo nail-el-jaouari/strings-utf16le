@@ -271,13 +271,13 @@ static size_t wc_printable(const wchar_t *buf, size_t size)
     for (size_t i = 0; i < size; i++)
     {
         const unsigned char *p = (const unsigned char *)buf;
-        unsigned char c[4];
+        wchar_t w;
+        unsigned char *c = (unsigned char *)&w;
         c[0] = p[2 * i];
         c[1] = p[2 * i + 1];
         c[2] = '\0';
         c[3] = '\0';
 
-        wchar_t w = (c[0]) | (c[1]<<8) | (c[2]<<16) | (c[3]<<24);
         if (!iswprint(w))
         {
             return i;
