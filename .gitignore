@@ -3,9 +3,10 @@ strings-utf16
 strings-utf16-*
 debug
 debug-*
-make-debug.sh
+*.sh
 mui/
 testing/
 Debug/
 .vscode/
 *.txt
+*.hex
