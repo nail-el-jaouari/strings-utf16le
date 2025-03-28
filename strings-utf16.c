@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
         }
 
         new_buffer = buffer + bytes_left;
-        memset(new_buffer, '\0', bytes_scanned);
+        memset(new_buffer, '\0', BUF_SZ - bytes_left);
         bytes_read = fread(new_buffer, sizeof *new_buffer, BUF_SZ - bytes_left, f);
 
         if (bytes_read == 0)
