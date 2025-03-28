@@ -326,7 +326,7 @@ malloc_u8str:
             case EILSEQ:
             case EINVAL:
             {
-                *err = EINVAL;
+                *err = errno;
                 *bytes_read = (size_t)(p - inbuf);
 
                 return u8str;
@@ -334,6 +334,7 @@ malloc_u8str:
             break;
             case E2BIG:
             {
+                *err = errno;
                 free(u8str);
                 buf_sz *= 2;
                 goto malloc_u8str;
