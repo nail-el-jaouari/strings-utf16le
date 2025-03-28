@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 
         p = buffer;
 
-        print_buffer(cd, (char **)&p, bytes_read, &bytes_scanned, &err);
+        print_buffer(cd, &p, bytes_read, &bytes_scanned, &err);
 
         if (err == EINVAL)
         {
@@ -295,6 +295,7 @@ char *from_wc_str(iconv_t cd, const char **buf, size_t size, size_t *bytes_read,
     size_t bytes_scanned;
 
     bytes_scanned = 2 * wc_printable((const wchar_t *)inbuf, size/2);
+
     if (bytes_scanned == 0)
     {
         *bytes_read = 0;
