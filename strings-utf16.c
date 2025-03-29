@@ -252,15 +252,15 @@ void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, er
         wc_str_pnt   = 0;
         //char_skipped = 1;
 
-        position++;
+        position += 2;
 
         if (position >= size)
         {
             break;
         }
 
-        *bytes_scanned = 1;
-        shift_buf += 1;
+        *bytes_scanned = 2;
+        shift_buf += 2;
 
         goto print_wc_str;
     }
