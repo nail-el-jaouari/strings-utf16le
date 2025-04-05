@@ -168,7 +168,7 @@ void print_str(const char **str, size_t size)
 
     while (position < size)
     {
-        int len = strlen(*str);
+        size_t len = strlen(*str);
         position += len + 1;
         if (len > 0)
         {
