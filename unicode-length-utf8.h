@@ -6,6 +6,6 @@
     Calculate the number of valid unicode code points in a
     utf8 string.
 */
-size_t unicode_length_u8string(const unsigned char *u8string);
+size_t unicode_length_u8string(const char *u8string);
 
 #endif
