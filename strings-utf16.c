@@ -26,13 +26,16 @@ int main(int argc, char *argv[])
     int ret = EXIT_SUCCESS;
     int hflag = 0;
     int lflag = 0;
+    int nflag = 0;
     const char *locale = NULL;
+    const char *min_arg = NULL;
+    size_t min = 0;
 
 
 
     for (;;)
     {
-        int c = getopt(argc, argv, "hl:");
+        int c = getopt(argc, argv, "hl:n:");
         if (c == -1)
         {
             break;
@@ -45,6 +48,10 @@ int main(int argc, char *argv[])
             case 'l':
                 lflag = 1;
                 locale = optarg;
+                break;
+            case 'n':
+                nflag = 1;
+                min_arg = optarg;
                 break;
             default:
                 usage(1);
@@ -63,6 +70,20 @@ int main(int argc, char *argv[])
         if (ret_locale == NULL)
         {
             perror("setlocale()");
+            ret = EXIT_FAILURE;
+            goto exit_program;
+        }
+    }
+
+    if (nflag)
+    {
+        char *endptr = NULL;
+
+        min = strtoul(min_arg, &endptr, 10);
+
+        if (endptr != NULL && *endptr != '\0')
+        {
+            usage(1);
             ret = EXIT_FAILURE;
             goto exit_program;
         }
@@ -100,6 +121,7 @@ int main(int argc, char *argv[])
     size_t bytes_read;
     size_t bytes_scanned = BUF_SZ;
     size_t bytes_left = 0;
+
     for (;;)
     {
         error_t err = 0;
@@ -156,7 +178,7 @@ void usage(int err)
 {
     FILE *console = (err != 0) ? stdout : stderr;
 
-    fprintf(console, "usage: strings-utf16 [-h] [-l locale] <file>\n");
+    fprintf(console, "usage: strings-utf16 [-h] [-l locale] [-n number] <file>\n");
 }
 
 /*
