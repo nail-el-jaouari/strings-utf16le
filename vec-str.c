@@ -26,6 +26,11 @@ void vec_str_free(struct VecStr *self)
     }
 
     free(self->data);
+
+    self->data = NULL;
+    self->size = 0;
+    self->total_str_length = 0;
+    self->capacity = MIN_CAP;
 }
 
 void vec_str_push(struct VecStr *self, const char *elem)

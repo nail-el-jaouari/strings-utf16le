@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#define MIN_CAP 16
+
 struct VecStr
 {
     char **data;
