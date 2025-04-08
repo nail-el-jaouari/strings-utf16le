@@ -16,4 +16,5 @@ struct VecStr
 void vec_str_init(struct VecStr *self, size_t capacity);
 void vec_str_free(struct VecStr *self);
 void vec_str_push(struct VecStr *self, const char *elem);
+void vec_str_print(const struct VecStr *self);
 #endif

@@ -30,7 +30,7 @@ void vec_str_free(struct VecStr *self)
     self->data = NULL;
     self->size = 0;
     self->total_str_length = 0;
-    self->capacity = MIN_CAP;
+    self->capacity = 0;
 }
 
 void vec_str_push(struct VecStr *self, const char *elem)
@@ -43,4 +43,12 @@ void vec_str_push(struct VecStr *self, const char *elem)
     self->data[self->size] = elem;
     self->size++;
     self->total_str_length += strlen(elem);
+}
+
+void vec_str_print(const struct VecStr *self)
+{
+    for (size_t i = 0; i < self->size; i++)
+    {
+        printf("%s", self->data[i]);
+    }
 }
