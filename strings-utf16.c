@@ -171,11 +171,11 @@ int main(int argc, char *argv[])
 
     vec_str_print(&line);
 
-    vec_str_free(&line);
     iconv_close(cd);
 close_file:
     fclose(f);
 exit_program:
+    vec_str_free(&line);
     return ret;
 }
 
