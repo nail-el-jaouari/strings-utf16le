@@ -39,8 +39,9 @@ void vec_str_push(struct VecStr *self, const char *elem)
     if (self->size == self->capacity)
     {
         self->capacity *= 2;
-        self->data = realloc(self->data, self->capacity);
+        self->data = reallocarray(self->data, self->capacity, sizeof *self->data);
     }
+
     self->data[self->size] = elem;
     self->size++;
     self->total_str_length += strlen(elem);
@@ -52,4 +53,5 @@ void vec_str_print(const struct VecStr *self)
     {
         printf("%s", self->data[i]);
     }
+    printf("\n");
 }
