@@ -12,12 +12,15 @@
 #include <errno.h>
 #include <string.h>
 
+#include "unicode-length-utf8.h"
+#include "vec-str.h"
+
 #ifndef BUF_SZ
 #define BUF_SZ (4096)
 #endif
 
 void usage(int err);
-void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, error_t *err);
+void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, error_t *err, size_t min, struct VecStr *line);
 char *from_wc_str(iconv_t cd, const char **buf, size_t size, size_t *bytes_read, size_t *out_buf_len, error_t *err);
 //char *from_str(const char *buf, size_t size, size_t *bytes_read);
 
@@ -30,8 +33,9 @@ int main(int argc, char *argv[])
     const char *locale = NULL;
     const char *min_arg = NULL;
     size_t min = 0;
+    struct VecStr line;
 
-
+    vec_str_init(&line, MIN_CAP);
 
     for (;;)
     {
@@ -146,7 +150,7 @@ int main(int argc, char *argv[])
 
         p = buffer;
 
-        print_buffer(cd, &p, bytes_read, &bytes_scanned, &err);
+        print_buffer(cd, &p, bytes_read, &bytes_scanned, &err, min, &line);
 
         if (err == EINVAL)
         {
@@ -165,8 +169,9 @@ int main(int argc, char *argv[])
         }
     }
 
-    printf("\n");
+    vec_str_print(&line);
 
+    vec_str_free(&line);
     iconv_close(cd);
 close_file:
     fclose(f);
@@ -184,32 +189,57 @@ void usage(int err)
 /*
  * print_str print all c-strings in str separated by '\0'.
  */
-void print_str(const char **str, size_t size)
+void print_str(const char **str, size_t size, size_t min, struct VecStr *line, int wc_str)
 {
     size_t position = 0;
 
-    while (position < size)
+    if (wc_str == 0)
     {
-        size_t len = strlen(*str);
-        position += len + 1;
-        if (len > 0)
+        if (line->total_str_length >= min)
         {
-            if (position < size)
-            {
-                printf("%s\n", *str);
-            }
-            else
-            {
-                printf("%s", *str);
-            }
+            vec_str_print(line);
         }
 
-        *str += len + 1;
+        vec_str_free(line);
+        vec_str_init(line, MIN_CAP);
+
+        char *elem = strdup(*str);
+        vec_str_push(line, elem);
     }
+    else
+    {
+        while (position < size)
+        {
+            size_t len = strlen(*str);
+            position += len + 1;
+            if (len > 0)
+            {
+                if (position < size)
+                {
+                    if (line->total_str_length >= min)
+                    {
+                        printf("\n");
+                        vec_str_print(line);
+                    }
+
+                    vec_str_free(line);
+                    vec_str_init(line, MIN_CAP);
+                }
+                else
+                {
+                    char *elem = strdup(*str);
+                    vec_str_push(line, elem);
+                }
+            }
+
+            *str += len + 1;
+        }
+    }
+
     fflush(stdout);
 }
 
-void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, error_t *err)
+void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, error_t *err, size_t min, struct VecStr *line)
 {
     char *shift_buf          = *buf;
     int crossing_boundary    = 0;
@@ -217,7 +247,6 @@ void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, er
     size_t out_buf_len       = 0;
 
     static int wc_str_pnt   = 1;
-    //static int char_skipped = 0;
 
     while (position < size)
     {
@@ -230,20 +259,10 @@ void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, er
         if (*bytes_scanned != 0 && new_buf != NULL)
         {
             crossing_boundary = (*bytes_scanned == (size - position)) ? 1 : 0;
-            if (wc_str_pnt == 1)
-            {
-                print_str((const char **)&new_buf, out_buf_len);
-            }
-            else
-            {
-                printf("\n");
-                print_str((const char **)&new_buf, out_buf_len);
-            }
-
+            print_str((const char **)&new_buf, out_buf_len, min, line, wc_str_pnt);
             free(old_buf);
 
             wc_str_pnt   = 1;
-            //char_skipped = 0;
 
             position += *bytes_scanned;
 
@@ -272,8 +291,6 @@ void print_buffer(iconv_t cd, char **buf, size_t size, size_t *bytes_scanned, er
 
     skip_char:
         wc_str_pnt   = 0;
-        //char_skipped = 1;
-
         position += 2;
 
         if (position >= size)
