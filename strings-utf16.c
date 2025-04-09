@@ -35,8 +35,6 @@ int main(int argc, char *argv[])
     size_t min = 0;
     struct VecStr line;
 
-    vec_str_init(&line, MIN_CAP);
-
     for (;;)
     {
         int c = getopt(argc, argv, "hl:n:");
@@ -100,13 +98,15 @@ int main(int argc, char *argv[])
         goto exit_program;
     }
 
+    vec_str_init(&line, MIN_CAP);
+
     FILE *f = fopen(argv[optind], "rb");
 
     if (f == NULL)
     {
         perror("fopen()");
         ret = EXIT_FAILURE;
-        goto exit_program;
+        goto free_vec_str;
     }
 
     iconv_t cd = iconv_open("UTF-8", "UTF-16LE");
@@ -169,13 +169,17 @@ int main(int argc, char *argv[])
         }
     }
 
-    vec_str_print(&line);
+    if (line.total_str_length >= min)
+    {
+        vec_str_print(&line);
+    }
 
     iconv_close(cd);
 close_file:
     fclose(f);
-exit_program:
+free_vec_str:
     vec_str_free(&line);
+exit_program:
     return ret;
 }
 
