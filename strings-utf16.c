@@ -185,7 +185,7 @@ exit_program:
 
 void usage(int err)
 {
-    FILE *console = (err != 0) ? stdout : stderr;
+    FILE *console = (err == 0) ? stdout : stderr;
 
     fprintf(console, "usage: strings-utf16 [-h] [-l locale] [-n number] <file>\n");
 }
