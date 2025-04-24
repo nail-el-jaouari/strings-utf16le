@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "vec-str.h"
+#include "unicode-length-utf8.h"
 
 void vec_str_init(struct VecStr *self, size_t capacity)
 {
@@ -42,9 +43,10 @@ void vec_str_push(struct VecStr *self, const char *elem)
         self->data = reallocarray(self->data, self->capacity, sizeof *self->data);
     }
 
-    self->data[self->size] = elem;
+    self->data[self->size] = (char *)elem;
     self->size++;
-    self->total_str_length += strlen(elem);
+    //self->total_str_length += strlen(elem);
+    self->total_str_length += unicode_length_u8string(elem);
 }
 
 void vec_str_print(const struct VecStr *self)
